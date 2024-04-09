@@ -1,0 +1,84 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    string username = Context.Session.GetString("user.username");
+}
+@model IEnumerable<dynamic>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between">
+        <div>
+            <h1>บันทึกแบบร่างของฉัน</h1><h2>@username</h2>
+        </div>
+        <div>
+            <a asp-controller="UserDoc" asp-action="Create">ร้องขอ</a>
+        </div>
+    </div>
+
+    @if (Model.Count() == 0)
+    {
+        <h2>ไม่ข้อมูลการร้องขอเร็วๆนี้</h2>
+    }
+    else
+    {
+        <div class="card p-4">
+            <table class="table table-striped display" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>Doc No.</th>
+                        <th>Workflow</th>
+                        <th>Notes</th>
+                        <th>Step</th>
+                        <th>อัปเดตล่าสุด</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in @Model)
+                    {
+                        <tr>
+                            @if (item?.complete_flag == true)
+                            {
+                                <td style="border-left: 5px green solid;">@item.wf_item_no</td>
+                            }
+                            else
+                            {
+                                <td>@item.wf_item_no</td>
+                            }
+                            <td>@item.wf_name</td>
+                            <td>@item.notes</td>
+                            <td>
+                                <small class="badge @item.badge">(@item.sequence/@item.max_sequence)</small>
+                                <p>@item.name</p>
+                            </td>
+                            <td>
+                                @item.last_date?.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+                            <td>
+                                @if (item.sequence == 1)
+                                {
+                                    <a asp-controller="UserDoc" asp-action="Edit" asp-route-id="@item.id">แก้ไข</a>
+                                    <a asp-controller="UserDoc" asp-action="Cancel" asp-route-id="@item.id">ยกเลิก</a>
+                                }
+                            </td>
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            new DataTable('.table', {
+                paging: false,
+                scrollCollapse: true,
+                scrollY: '50vh'
+            });
+        });
+    </script>
+}

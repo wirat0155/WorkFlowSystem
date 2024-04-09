@@ -1,0 +1,40 @@
+﻿@model dynamic;
+
+<div class="d-flex justify-content-start">
+    <div>
+        <a class="btn btn-sm btn-outline-dark" asp-controller="Doc" asp-action="RequestList">กลับ</a>
+    </div>
+</div>
+<h1>รายละเอียดการร้องขอ</h1>
+<div class="row mt-4">
+    <div class="col-2">
+        <label>ประเภท</label>
+    </div>
+    <div class="col">
+        <p>@Model.wf_name</p>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-2">
+        <label>Notes</label>
+    </div>
+    <div class="col">
+        <p>@Model.notes</p>
+    </div>
+</div>
+
+<div class="d-flex justify-content-start mt-3">
+    <div>
+        <a asp-controller="Doc" asp-action="Approve" asp-route-id="@Model.id" class="btn btn-success">อนุมัติ</a>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#disapprove" onclick="showForm(@Model.id)">
+            ไม่อนุมัติ
+        </button>
+    </div>
+</div>
+
+<partial name="Modal/_ModalDisapprove" />
+    
+@section Scripts {
+    <script src="~/js/disapprove.js"></script>
+}

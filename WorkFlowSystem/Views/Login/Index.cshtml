@@ -1,0 +1,31 @@
+﻿@{
+    Layout = "_LayoutLogin";
+}
+@using WorkFlowSystem.Models.ViewModels;
+@model LoginVM;
+
+<div class="container">
+    <div class="card p-4">
+        <form asp-controller="Login" asp-action="Index" method="post">
+            <h1>Login</h1>
+            <div class="row mt-4">
+                <div class="col-2">
+                    <label>Username</label>
+                </div>
+                <div class="col">
+                    <input class="form-control" placeholder="Username" asp-for="username" value="010001" />
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-2">
+                    <label>Password</label>
+                </div>
+                <div class="col">
+                    <input class="form-control" placeholder="Password" type="password" asp-for="password" value="123456" />
+                </div>
+            </div>
+            <small class="text-danger">@TempData["username-error"]</small><br/>
+            <button type="submit" class="btn btn-primary mt-4">เข้าสู่ระบบ</button>
+        </form>
+    </div>
+</div>

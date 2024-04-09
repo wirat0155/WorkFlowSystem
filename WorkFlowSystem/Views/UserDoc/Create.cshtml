@@ -1,0 +1,36 @@
+﻿@using WorkFlowSystem.Models.ViewModels;
+@model WorkflowVM;
+<div class="d-flex justify-content-start">
+    <div>
+        <a class="btn btn-sm btn-outline-dark" asp-controller="UserDoc" asp-action="Index">กลับ</a>
+    </div>
+</div>
+<h1>แบบฟอร์มร้องขอ</h1>
+<form asp-controller="UserDoc" asp-action="Create" method="post">
+    <div class="row mt-4">
+        <div class="col-2">
+        <label>ประเภท</label>
+        </div>
+        <div class="col">
+            <select class="form-control" asp-items="@Model.Workflow" asp-for="workflow_no">
+                <option disabled selected>--- กรุณาเลือกประเภทการร้องขอ ---</option>
+            </select>
+        </div>
+    </div>    
+
+    <div class="row mt-3">
+        <div class="col-2">
+            <label>Notes</label>
+        </div>
+        <div class="col">
+            <textarea asp-for="notes" class="form-control"></textarea>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-start mt-3">
+        <div>
+            <button type="submit" value="draft" class="btn btn-outline-primary" name="btn">บันทึกร่าง</button>
+            <button type="submit" value="submit" class="btn btn-primary" name="btn">ร้องขอ</button>
+        </div>
+    </div>
+</form>
