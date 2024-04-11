@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ using WorkFlowSystem.Services;
 
 namespace WorkFlowSystem.Controllers
 {
-    public class UserDocController : Controller
+    public class UserDocController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly WorkflowRepository _workflow;
@@ -35,7 +36,6 @@ namespace WorkFlowSystem.Controllers
 
         public async Task<IActionResult> Index()
         {
-            HttpContext.Session.SetString("user.username", "010001");
             string username = HttpContext.Session.GetString("user.username");
             var list = await _dapper.Query("SELECT * FROM [vw_user_doc] WHERE username = @us AND sequence <> 1 ORDER BY last_date DESC", new
             {
@@ -46,7 +46,6 @@ namespace WorkFlowSystem.Controllers
 
         public async Task<IActionResult> DraftList()
         {
-            HttpContext.Session.SetString("user.username", "010001");
             string username = HttpContext.Session.GetString("user.username");
             var list = await _dapper.Query("SELECT * FROM [vw_user_doc] WHERE username = @us AND sequence = 1 ORDER BY last_date DESC", new
             {
@@ -65,7 +64,6 @@ namespace WorkFlowSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(WorkflowVM model, string btn = "submit")
         {
-            HttpContext.Session.SetString("user.username", "010001");
             string username = HttpContext.Session.GetString("user.username");
             if (!ModelState.IsValid)
             {
@@ -89,7 +87,8 @@ namespace WorkFlowSystem.Controllers
             });
             int? step_id = wf_step?.id;
 
-            await _dapper.Execute("INSERT INTO [workflow_item] VALUES (@wf_no, @stp, @notes, @flag, @rev, @us, @cre, @last, @wf_item_no)", new
+            await _dapper.Execute("INSERT INTO [workflow_item] VALUES (@wf_no, @stp, @notes, @flag, @rev, @us, " +
+                "@cre, @last, @wf_item_no, @dis_flag)", new
             {
                 wf_no = model.workflow_no,
                 stp = wf_step?.id,
@@ -99,7 +98,8 @@ namespace WorkFlowSystem.Controllers
                 us = username,
                 cre = DateTime.Now,
                 last = DateTime.Now,
-                wf_item_no = await _wf_item.GenWfItemNo(model.workflow_no)
+                wf_item_no = await _wf_item.GenWfItemNo(model.workflow_no),
+                dis_flag = false
             }) ;
 
             if (btn == "draft")
@@ -129,7 +129,6 @@ namespace WorkFlowSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(WorkflowVM model, string btn = "submit")
         {
-            HttpContext.Session.SetString("user.username", "010001");
             string username = HttpContext.Session.GetString("user.username");
             if (!ModelState.IsValid)
             {
@@ -165,6 +164,12 @@ namespace WorkFlowSystem.Controllers
             if (btn == "draft")
                 return RedirectToAction(nameof(DraftList));
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Cancel(int id)
+        {
+            await _dapper.Execute("DELETE FROM [workflow_item] WHERE id = @id", new { id });
+            return RedirectToAction(nameof(DraftList));
         }
     }
 }

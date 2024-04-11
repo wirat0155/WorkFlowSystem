@@ -1,0 +1,18 @@
+﻿@model IEnumerable<dynamic>
+<section class="container">
+    <div class="row">
+    @foreach(var item in Model)
+    {
+        <div class="col-6 col-md-4 col-lg-3 col-xl-2 mt-2">
+            <div class="card p-4">
+                <h5 class="m-0 p-0">@item.workflow_no</h5>
+                <p class="m-0 pb-3">@item.name</p>
+                <img src="~/image/step.png" />
+                    <a class="mt-2" asp-controller="Step" asp-action="StepList"
+                       asp-route-wf="@item.workflow_no"
+                       asp-route-rev="@item.max_revision_no">ดูเพิ่มเติม</a>
+            </div>
+        </div>
+    }
+    </div>
+</section>

@@ -7,7 +7,7 @@ using WorkFlowSystem.Services;
 
 namespace WorkFlowSystem.Controllers
 {
-    public class LoginController : Controller
+    public class LoginController : BaseController
     {
         private readonly DapperService _dapper;
 

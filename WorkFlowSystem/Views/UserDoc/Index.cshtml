@@ -40,6 +40,10 @@
                             {
                                 <td style="border-left: 5px green solid;">@item.wf_item_no</td>
                             }
+                            else if (item?.disapprove_flag == true)
+                            {
+                                <td style ="border-left: 5px red solid;">@item.wf_item_no</td>
+                            }
                             else
                             {
                                 <td>@item.wf_item_no</td>
@@ -47,8 +51,16 @@
                             <td>@item.wf_name</td>
                             <td>@item.notes</td>
                             <td>
-                                <small class="badge @item.badge">(@item.sequence/@item.max_sequence)</small>
-                                <p>@item.name</p>
+                                @if (item?.disapprove_flag == true)
+                                {
+                                    <small class="badge badge-danger">(@item.sequence/@item.max_sequence)</small>
+                                    <p><del>@item.name</del></p>
+                                }
+                                else
+                                {
+                                    <small class="badge @item.badge">(@item.sequence/@item.max_sequence)</small>
+                                    <p>@item.name</p>
+                                }
                             </td>
                             <td>
                                 @item.last_date?.ToString("dd/MM/yyyy HH:mm")

@@ -1,0 +1,71 @@
+﻿@using WorkFlowSystem.Models.ViewModels
+@model StepListVM;
+
+<h1>StepList</h1>
+
+<section class="container">
+    <form onsubmit="saveStep(event)">
+        <ul class="list-group">
+            @{
+                int index = -1;
+            }
+            @foreach (var item in Model.list)
+            {
+                index++;
+
+                // Step แรกและสุดท้ายแก้ไขไม่ได้
+                if (index == 0 || index == Model.list.Count() - 1)
+                {
+                    <li class="list-group-item" data-id="@item.id">@item.name</li>
+                }
+                else
+                {
+                    <li class="list-group-item" data-id="@item.id">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <button class="btn btn-primary">Insert</button>
+                            </div>
+                            <div>
+                                <input class="form-control" value="@item.name" required />
+                            </div>
+                            <div>
+                                <button class="btn btn-outline-danger">Remove</button>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-2 pt-2">
+                                <label>Department</label>
+                            </div>
+                            <div class="col-6">
+                                <select class="form-control" asp-items="@Model.department" required>
+                                    <option>--- เลือก Department ---</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2 pt-2">
+                                <label>Role</label>
+                            </div>
+                            <div class="col-6">
+                                <select class="form-control" asp-items="@Model.role" required>
+                                    <option>--- เลือก Role ---</option>
+                                </select>
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+            <button type="submit" class="btn btn-success py-3">บันทึก Revision ใหม่</button>
+        </ul>
+    </form>
+    <a asp-controller="Step" asp-action="Index">กลับ</a>
+</section>
+@section Scripts {
+    <script>
+        function saveStep(event) {
+            event.preventDefault();
+        }
+
+        function
+    </script>
+}

@@ -9,7 +9,7 @@ using WorkFlowSystem.Services;
 
 namespace WorkFlowSystem.Controllers
 {
-    public class DocController : Controller
+    public class DocController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly WorkflowRepository _workflow;
@@ -27,10 +27,6 @@ namespace WorkFlowSystem.Controllers
 
         public async Task<IActionResult> RequestList()
         {
-            HttpContext.Session.SetString("user.username", "010001");
-            HttpContext.Session.SetString("user.role_no", "ASM");
-            HttpContext.Session.SetString("user.department_no", "IT");
-            string username = HttpContext.Session.GetString("user.username");
             string role_no = HttpContext.Session.GetString("user.role_no");
             string department_no = HttpContext.Session.GetString("user.department_no");
             var list = await _dapper.Query("SELECT * FROM [vw_user_doc] " +
@@ -45,12 +41,6 @@ namespace WorkFlowSystem.Controllers
 
         public async Task<IActionResult> Detail(int id)
         {
-            HttpContext.Session.SetString("user.username", "010001");
-            HttpContext.Session.SetString("user.role_no", "ASM");
-            HttpContext.Session.SetString("user.department_no", "IT");
-            string username = HttpContext.Session.GetString("user.username");
-            string role_no = HttpContext.Session.GetString("user.role_no");
-            string department_no = HttpContext.Session.GetString("user.department_no");
             var wf_item = await _dapper.QueryFirstOrDefaultAsync("SELECT * FROM [vw_user_doc] WHERE id = @id", new
             {
                 id = id
@@ -60,14 +50,7 @@ namespace WorkFlowSystem.Controllers
 
         public async Task<IActionResult> Approve(int id)
         {
-            HttpContext.Session.SetString("user.username", "010001");
-            HttpContext.Session.SetString("user.role_no", "ASM");
-            HttpContext.Session.SetString("user.department_no", "IT");
             string username = HttpContext.Session.GetString("user.username");
-            string role_no = HttpContext.Session.GetString("user.role_no");
-            string department_no = HttpContext.Session.GetString("user.department_no");
-
-
             var wf_item = await _dapper.QueryFirstOrDefaultAsync("SELECT * FROM [vw_user_doc] WHERE id = @id", new
             {
                 id = id
@@ -88,21 +71,46 @@ namespace WorkFlowSystem.Controllers
                     rev = wf_item.step_revision_no
                 });
 
-            await _dapper.Execute("UPDATE [workflow_item] SET step_id = @stp, last_date = @last WHERE id = @id", new
+            // IS LAST STEP
+            bool isLast = await checkIsLastStep(wf_step_next.id);
+
+            // UPDATE ITEM STEP
+            await _dapper.Execute("UPDATE [workflow_item] SET complete_flag = @flag, step_id = @stp, last_date = @last WHERE id = @id", new
             {
+                flag = true,
                 stp = wf_step_next.id,
                 id = wf_item.id,
-                last = DateTime.Now
-            }) ;
-            return null;
+                last = DateTime.Now,
+            });
+
+            // SAVE HISTORY APPROVE
+            await _dapper.Execute("INSERT INTO [wf_item_history] VALUES (@item_id, @stp, @user, @date, @act, @remarks)", new
+            {
+                item_id = wf_item.id,
+                stp = wf_step_current.id,
+                user = username,
+                date = DateTime.Now,
+                act = "APV",
+                remarks = ""
+            });
+            return RedirectToAction(nameof(RequestList));
+        }
+
+        private async Task<bool> checkIsLastStep(dynamic id)
+        {
+            var wf_step = await _dapper.QueryFirstOrDefaultAsync("SELECT * FROM [workflow_step] WHERE id = @id", new { id });
+            var wf_step_next = await _dapper.QueryFirstOrDefaultAsync("SELECT * FROM [workflow_step] WHERE " +
+                "revision_no = @rev AND sequence = @seq AND workflow_no = @wf_no", new {
+                rev = wf_step.revision_no,
+                seq = wf_step.sequence + 1,
+                wf_no = wf_step.workflow_no
+            });
+            return wf_step_next == null;
         }
 
         [HttpPost]
         public async Task<IActionResult> Disapprove([FromForm] DisapproveVM model)
         {
-            HttpContext.Session.SetString("user.username", "010001");
-            HttpContext.Session.SetString("user.role_no", "ASM");
-            HttpContext.Session.SetString("user.department_no", "IT");
             string username = HttpContext.Session.GetString("user.username");
             string role_no = HttpContext.Session.GetString("user.role_no");
             string department_no = HttpContext.Session.GetString("user.department_no");
