@@ -56,9 +56,14 @@
                                     <small class="badge badge-danger">(@item.sequence/@item.max_sequence)</small>
                                     <p><del>@item.name</del></p>
                                 }
+                                else if (item?.complete_flag == true)
+                                {
+                                    <small class="badge badge-success">(@item.sequence/@item.max_sequence)</small>
+                                    <p>@item.name</p>
+                                }
                                 else
                                 {
-                                    <small class="badge @item.badge">(@item.sequence/@item.max_sequence)</small>
+                                    <small class="badge badge-warning">(@item.sequence/@item.max_sequence)</small>
                                     <p>@item.name</p>
                                 }
                             </td>
@@ -78,9 +83,7 @@
     <script>
         $(document).ready(function () {
             new DataTable('.table', {
-                paging: false,
-                scrollCollapse: true,
-                scrollY: '50vh'
+                ordering: false,
             });
         });
     </script>

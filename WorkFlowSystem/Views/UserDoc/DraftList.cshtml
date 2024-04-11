@@ -37,18 +37,11 @@
                     @foreach (var item in @Model)
                     {
                         <tr>
-                            @if (item?.complete_flag == true)
-                            {
-                                <td style="border-left: 5px green solid;">@item.wf_item_no</td>
-                            }
-                            else
-                            {
-                                <td>@item.wf_item_no</td>
-                            }
+                            <td>@item.wf_item_no</td>
                             <td>@item.wf_name</td>
                             <td>@item.notes</td>
                             <td>
-                                <small class="badge @item.badge">(@item.sequence/@item.max_sequence)</small>
+                                <small class="badge badge-secondary">(@item.sequence/@item.max_sequence)</small>
                                 <p>@item.name</p>
                             </td>
                             <td>
@@ -75,9 +68,7 @@
     <script>
         $(document).ready(function () {
             new DataTable('.table', {
-                paging: false,
-                scrollCollapse: true,
-                scrollY: '50vh'
+                ordering: false,
             });
         });
     </script>

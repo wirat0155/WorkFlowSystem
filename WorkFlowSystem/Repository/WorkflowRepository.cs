@@ -24,7 +24,7 @@ namespace WorkFlowSystem.Repository
                 list.Add(new SelectListItem()
                 {
                    Value = item.workflow_no,
-                   Text = item.name
+                   Text = item.workflow_no
                 });
             }
             return list;

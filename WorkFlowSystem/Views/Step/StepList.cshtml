@@ -1,13 +1,74 @@
-﻿@*
+﻿@using WorkFlowSystem.Models.ViewModels
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
 }
-@model IEnumerable<dynamic>
+@model SteplistVM;
+@{
+	var wf_step = Model.list.FirstOrDefault();
+}
 
+<div class="container-fluid">
+	<div class="d-flex justify-content-between">
+		<div>
+			<h1>@wf_step.workflow_no - @wf_step.wf_name</h1>
+			<h4>Revision : @wf_step.revision_no</h4>
+			<div class="dropdown show">
+				<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Revision
+				</a>
 
-<section class="container mt-4">
-    <div class="card p-4">
-        @Model.FirstOrDefault().workflow_no
-    </div>
-</section>
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+					@for (int i = Model.max_revision ?? 1; i > 0; i--)
+					{
+						<a class="dropdown-item" asp-controller="Step" asp-action="StepList"
+						   asp-route-wf="@wf_step.workflow_no"
+						   asp-route-rev="@i">@i</a>
+					}
+				</div>
+			</div>
+		</div>
+		<div>
+			<a asp-controller="Step" asp-action="EditStepList" asp-route-wf="@wf_step.workflow_no"
+			   asp-route-rev="@wf_step.revision_no">แก้ไขลำดับ</a>
+		</div>
+	</div>
+
+	@if (Model.list.Count() == 0)
+	{
+		<h2>ไม่ข้อมูลการร้องขอเร็วๆนี้</h2>
+	}
+	else
+	{
+		<div class="card p-4 mt-4">
+			<table class="table table-striped display" style="width: 100%">
+				<thead>
+					<tr>
+						<th>ลำดับที่</th>
+						<th>ชื่อ</th>
+						<th>Department</th>
+						<th>Role</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					@{
+						int index = 0;
+					}
+					@foreach (var item in @Model.list)
+					{
+						index++;
+						<tr>
+							<td>@index</td>
+							<td>@item.name</td>
+							<td>@item.department_no - @item.department_name</td>
+							<td>@item.role_no - @item.role_name</td>
+						</tr>
+
+					}
+				</tbody>
+			</table>
+		</div>
+	}
+</div>

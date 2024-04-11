@@ -8,9 +8,29 @@ namespace WorkFlowSystem.Controllers
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            context.HttpContext.Session.SetString("user.username", "010002");
-            context.HttpContext.Session.SetString("user.role_no", "MNG");
-            context.HttpContext.Session.SetString("user.department_no", "IT");
+            int user = 1;
+            if (user == 1)
+            {
+                context.HttpContext.Session.SetString("user.username", "240002");
+                context.HttpContext.Session.SetString("user.role_no", "EMP");
+                context.HttpContext.Session.SetString("user.department_no", "IT");
+            }
+            else if (user == 2)
+            {
+                context.HttpContext.Session.SetString("user.username", "010001");
+                context.HttpContext.Session.SetString("user.role_no", "ASM");
+                context.HttpContext.Session.SetString("user.department_no", "IT");
+            }
+            else
+            {
+
+                context.HttpContext.Session.SetString("user.username", "010002");
+                context.HttpContext.Session.SetString("user.role_no", "MNG");
+                context.HttpContext.Session.SetString("user.department_no", "IT");
+            }
+
+           
+
             base.OnActionExecuting(context);
         }
     }

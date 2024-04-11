@@ -1,71 +1,152 @@
-﻿@using WorkFlowSystem.Models.ViewModels
-@model StepListVM;
+﻿@using WorkFlowSystem.Models.ViewModels;
+@model EditStepListVM;
+@{
+	string wf_no = Model.list.FirstOrDefault()?.workflow_no;
+	int rev = Model.list.FirstOrDefault().revision_no;
+}
 
-<h1>StepList</h1>
+
+<h1>เส้นทางสายอนุมัติ</h1>
 
 <section class="container">
-    <form onsubmit="saveStep(event)">
-        <ul class="list-group">
-            @{
-                int index = -1;
-            }
-            @foreach (var item in Model.list)
-            {
-                index++;
+	<form id="saveStep" onsubmit="saveStep(event)">
+		<ul class="list-group">
+			@{
+				int index = -1;
+			}
+			@foreach (var item in Model.list)
+			{
+				index++;
 
-                // Step แรกและสุดท้ายแก้ไขไม่ได้
-                if (index == 0 || index == Model.list.Count() - 1)
-                {
-                    <li class="list-group-item" data-id="@item.id">@item.name</li>
-                }
-                else
-                {
-                    <li class="list-group-item" data-id="@item.id">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <button class="btn btn-primary">Insert</button>
-                            </div>
-                            <div>
-                                <input class="form-control" value="@item.name" required />
-                            </div>
-                            <div>
-                                <button class="btn btn-outline-danger">Remove</button>
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-2 pt-2">
-                                <label>Department</label>
-                            </div>
-                            <div class="col-6">
-                                <select class="form-control" asp-items="@Model.department" required>
-                                    <option>--- เลือก Department ---</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-2 pt-2">
-                                <label>Role</label>
-                            </div>
-                            <div class="col-6">
-                                <select class="form-control" asp-items="@Model.role" required>
-                                    <option>--- เลือก Role ---</option>
-                                </select>
-                            </div>
-                        </div>
-                    </li>
-                }
-            }
-            <button type="submit" class="btn btn-success py-3">บันทึก Revision ใหม่</button>
-        </ul>
-    </form>
-    <a asp-controller="Step" asp-action="Index">กลับ</a>
+				// Step แรกและสุดท้ายแก้ไขไม่ได้
+				if (index == 0 || index == Model.list.Count() - 1)
+				{
+					<li class="list-group-item">@item.name</li>
+				}
+				else
+				{
+					<li class="list-group-item for-save" id="@index">
+						<div class="d-flex justify-content-between">
+							<div>
+								<button type="button" class="btn btn-primary" onclick="insert(@index)">Insert</button>
+							</div>
+							<div>
+								<input class="form-control" value="@item.name" required name="name" />
+							</div>
+							<div>
+								<button type="button" class="btn btn-outline-danger" onclick="remove(@index)">Remove</button>
+							</div>
+						</div>
+						<div class="row mt-2">
+							<div class="col-2 pt-2">
+								<label>Department</label>
+							</div>
+							<div class="col-6">
+								<select asp-for="@item.department_no" asp-items="@Model.department" class="form-control" required name="department_no">
+									<option disabled selected value="">--- เลือก Department ---</option>
+								</select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-2 pt-2">
+								<label>Role</label>
+							</div>
+							<div class="col-6">
+								<select asp-for="@item.role_no" asp-items="@Model.role" class="form-control" required name="role_no">
+									<option disabled selected value="">--- เลือก Role ---</option>
+								</select>
+							</div>
+						</div>
+					</li>
+				}
+			}
+			<button type="submit" class="btn btn-success py-3">บันทึก Revision ใหม่</button>
+		</ul>
+	</form>
+	<a href="#" onclick="history.back()">กลับ</a>
 </section>
 @section Scripts {
-    <script>
-        function saveStep(event) {
-            event.preventDefault();
-        }
+	<script>
+		let count = @Model.list.Count() - 2;
+		let dept = @Html.Raw(Json.Serialize(Model.department));
+		let role = @Html.Raw(Json.Serialize(Model.role));
+	</script>
+	<script>
+		function saveStep(event) {
+			event.preventDefault();
 
-        function
-    </script>
+			const form = document.getElementById("saveStep");
+			const items = [];
+
+			form.querySelectorAll('.list-group-item.for-save').forEach(itemElement => {
+				const workflow_no = '@wf_no';
+				const revision_no = @rev;
+				const name = itemElement.querySelector('input[name="name"]').value;
+				const department_no = itemElement.querySelector('select[name="department_no"]').value;
+				const role_no = itemElement.querySelector('select[name="role_no"]').value;
+
+				items.push({ workflow_no, revision_no, name, department_no, role_no });
+			});
+
+			console.table(items);
+
+			$.ajax({
+				url: '@Url.Action("SaveStep", "Step")',
+				type: 'POST',
+				dataType: 'JSON',
+				data: { list: items },
+				success: function (response) {
+					console.log('Data saved successfully');
+				},
+				error: function (xhr, status, error) {
+					console.error('Failed to save data:', error);
+				}
+			});
+		}
+
+
+		function insert(index) {
+			count++;
+			let li = `<li class="list-group-item for-save" id="${count}">
+							<div class="d-flex justify-content-between">
+								<div>
+									<button type="button" class="btn btn-primary" onclick="insert(${count})">Insert</button>
+								</div>
+								<div>
+									<input class="form-control" required name="name"/>
+								</div>
+								<div>
+									<button type="button" class="btn btn-outline-danger" onclick="remove(${count})">Remove</button>
+								</div>
+							</div>
+								<div class="row mt-2">
+									<div class="col-2 pt-2">
+										<label>Department</label>
+									</div>
+									<div class="col-6">`;
+			li += `<select class="form-control" required name="department_no"><option disabled selected value="">--- เลือก Department ---</option>`;
+			for (let i = 0; i < dept.length; i++) {
+				li += `<option value="${dept[i].value}">${dept[i].text}</option>`;
+			}
+			li += `</select>`
+			li += `</div></div>`;
+			li += `<div class="row">
+						<div class="col-2 pt-2">
+							<label>Role</label>
+						</div>
+						<div class="col-6">`;
+			li += `<select class="form-control" required name="role_no"><option disabled selected value="">--- เลือก Role ---</option>`;
+			for (let i = 0; i < role.length; i++) {
+				li += `<option value="${role[i].value}">${role[i].text}</option>`;
+			}
+			li += `</div></div></li>`;
+			console.log(li);
+			console.log(index);
+			$(li).insertAfter("#" + index);
+		}
+
+		function remove(index) {
+			$("li#" + index).remove();
+		}
+	</script>
 }

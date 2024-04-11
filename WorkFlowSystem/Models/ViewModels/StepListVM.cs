@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace WorkFlowSystem.Models.ViewModels
 {
-    public class StepListVM
+    public class SteplistVM
     {
-        public IEnumerable<dynamic> list;
-        public List<SelectListItem> department { get; set; }
-        public List<SelectListItem> role { get; set; }
+        public IEnumerable<dynamic> list { get; set; }
+        public int? max_revision  { get; set; }
     }
 }

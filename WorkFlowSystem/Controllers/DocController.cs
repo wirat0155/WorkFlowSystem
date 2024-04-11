@@ -77,7 +77,7 @@ namespace WorkFlowSystem.Controllers
             // UPDATE ITEM STEP
             await _dapper.Execute("UPDATE [workflow_item] SET complete_flag = @flag, step_id = @stp, last_date = @last WHERE id = @id", new
             {
-                flag = true,
+                flag = isLast,
                 stp = wf_step_next.id,
                 id = wf_item.id,
                 last = DateTime.Now,

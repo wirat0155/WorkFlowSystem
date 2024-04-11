@@ -53,13 +53,13 @@ namespace WorkFlowSystem
             app.UseRouting();
 
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Step}/{action=Index}/{id?}");
+                    pattern: "{controller=Step}/{action=EditStepList}/{wf=REP}/{rev=2}");
             });
+
         }
     }
 }

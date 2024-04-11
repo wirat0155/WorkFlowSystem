@@ -72,7 +72,8 @@ namespace WorkFlowSystem.Controllers
             }
 
 
-            var wf = await _dapper.QueryFirstOrDefaultAsync("SELECT * FROM [workflow] WHERE workflow_no = @wf_no", new
+            var wf = await _dapper.QueryFirstOrDefaultAsync("SELECT MAX([revision_no]) AS revision_no FROM [wf_revision_history] " +
+                "WHERE [workflow_no] = @wf_no AND [revision_start_date] <= GETDATE() GROUP BY [workflow_no]", new
             {
                 wf_no = model.workflow_no
             });
