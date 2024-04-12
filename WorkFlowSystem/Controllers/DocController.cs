@@ -14,15 +14,18 @@ namespace WorkFlowSystem.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly WorkflowRepository _workflow;
         private readonly DapperService _dapper;
+        private readonly ApproveRepository _approve;
 
         public DocController(
             ILogger<HomeController> logger,
             WorkflowRepository workflow,
-            DapperService dapper)
+            DapperService dapper,
+            ApproveRepository approve)
         {
             _logger = logger;
             _workflow = workflow;
             _dapper = dapper;
+            _approve = approve;
         }
 
         public async Task<IActionResult> RequestList()
@@ -112,8 +115,7 @@ namespace WorkFlowSystem.Controllers
         public async Task<IActionResult> Disapprove([FromForm] DisapproveVM model)
         {
             string username = HttpContext.Session.GetString("user.username");
-            string role_no = HttpContext.Session.GetString("user.role_no");
-            string department_no = HttpContext.Session.GetString("user.department_no");
+
             var wf_item = await _dapper.QueryFirstOrDefaultAsync("SELECT * FROM [workflow_item] WHERE id = @id", new
             {
                 id = model.id

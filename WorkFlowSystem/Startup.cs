@@ -31,7 +31,8 @@ namespace WorkFlowSystem
             services.AddScoped(typeof(WorkflowRepository));
             services.AddScoped(typeof(WorkflowItemService));
             services.AddScoped(typeof(DropdownService));
-
+            services.AddScoped(typeof(StepRepository));
+            services.AddScoped(typeof(ApproveRepository));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

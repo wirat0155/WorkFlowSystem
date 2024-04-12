@@ -8,7 +8,7 @@ namespace WorkFlowSystem.Controllers
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            int user = 1;
+            int user = 2;
             if (user == 1)
             {
                 context.HttpContext.Session.SetString("user.username", "240002");
